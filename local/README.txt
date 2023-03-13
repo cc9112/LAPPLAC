@@ -1,0 +1,1 @@
+Use this folder for user-local work, excluded from the Git repo.
