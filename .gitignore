@@ -4,7 +4,7 @@
 *.pyc
 
 # Generate local (to user only) directory for testing without pushing to repo
-local/
+local/*
 !local/README.txt
 
 # Ignore single file in case local user settings are required - e.g. filepaths to data etc.
