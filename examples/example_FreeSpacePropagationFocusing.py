@@ -38,8 +38,8 @@ laserParameters = {
 }
 
 # Define the beam profile and generate the beam 
-#taken from generateInputBeam.m
-#returns [x,y,z,inputBeam] 
+# taken from generateInputBeam.m
+# returns [x,y,z,inputBeam] 
 
 zR = get_zr(laserParameters)
 zMax   = 2.0*3.0*zR #(-3*zR to 3*zR)
@@ -54,7 +54,7 @@ w_z0 = w0 * np.sqrt(1.0 + (z0/zR)**2)
 
 laserParameters['w_z0'] = w_z0
 #%%
-#Setup computational parameters
+# Setup computational parameters
 n_pts  = 512   		# number of pixels (must be even)
 res    = 1*um   		# resolution in image plane (m)
 nz     = 512    		# number of points in z (must be even)
@@ -71,9 +71,9 @@ z = np.linspace(0,zMax,nz)
 #get E field amplitude 
 inputBeam = make_inputBeam(X,Y,laserParameters)
 
-#Setup phase profile
+# Setup phase profile
 
-#focusing beam
+# focusing beam
 w_z0 = laserParameters['w_z0']
 lambda0 = laserParameters['lambda0']
 
@@ -101,7 +101,7 @@ t = shadow(inputBeam)**2
 #t[t<t.max()*np.exp(-2)] = 0.0
 ax1.imshow(t, extent=extent)
 
-#should be waist size
+# should be waist size
 theta = np.linspace(0.0, 2.0*np.pi, 100)
 r = w_z0 * 1e6
 x_circ,y_circ = r*np.cos(theta), r*np.sin(theta)
@@ -125,16 +125,17 @@ print('f_number_2: ', f_number_2)
 
 
 #%%
-# no plasma default
+# Specify plasma
+# None - propagate in vacuum
 ne = np.zeros((n_pts, n_pts, nz))
 
 #%%
 #Setup first step and tools for propagation
 # Propagate the beam through the plasma structure
-#data.Field = beamPropagator(data); 
+# data.Field = beamPropagator(data); 
 
-#Absorbing boundaries
-# Reducing the affect of the edges of the domain?
+# Absorbing boundaries
+# Reduces the effect of the edges of the domain
 absorbingBoundaries = 1
 
 eta0 = 1.0
@@ -146,16 +147,18 @@ AS, xFreq, yFreq, G, mask, X, Y, z, eta = setup_propagate(inputBeam, X, Y, z, et
 
 #%%
 #% MAIN ITERATION LOOP IN dz
-
 Field = propagate_in_z(AS, xFreq, yFreq, G, mask, X, Y, z, eta, k0)
+
 #%%
+# Interactive viewer of whole propagation of beam
+
 buttons = explorer(Field, ne, z)
 
 #%%
-#COMPARE WITH THEORY
+# COMPARE WITH GUASSIAN BEAM PROPAGATION THEORY
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True)
 
-fig.suptitle('Gaussian Free Space Propagation Test')
+fig.suptitle('Gaussian Free Space Propagation')
 
 asp = (z.max() - z.min()) / (y.max()  - y.min())
 ax1.imshow(shadow(Field[:, mid, :]), aspect=asp, extent=[z.min()*1e3, z.max()*1e3, y.min()*1e3, y.max()*1e3])
@@ -207,28 +210,28 @@ ax3.set_title('$|E|^2$')
 ax3.legend()
 
 
-# check it makes proper beam wavefronts
-# like in 
+#%%
+# CHECK THAT IT MAKES PROPER CURVED WAVEFRONTS
 plt.figure()
 E_full = np.real(np.exp(+1j * k0 * Zd*1e-3) *  Field[:, mid, :])
-plt.title('$\Re$(Ee$^{ikz}$)')
+plt.title('Include Beam Oscillations: $\Re$(Ee$^{ikz}$)')
 plt.imshow(E_full, aspect=asp, extent=[z.min()*1e3, z.max()*1e3, y.min()*1e3, y.max()*1e3])
-
-
+plt.xlabel('z (mm)')
+plt.ylabel('y (mm)')
 
 
 #%%
-# FOCAL SPOT ANALYSIS
+# COMPARE FOCAL SPOT TO GUASSIAN BEAM PROPAGATION THEORY
 
 # AT FOCAL PLANE, W0 = 1/e^2 RADIUS OF THE BEAM'S INTENSITY
 
+# Find focal point in z
 idx = np.argmin((z-zf)**2)
-
 focal_slice = Field[:,:,idx].copy()
 
+# Get beam intensity at this position
 I = shadow(focal_slice)
 e2_val = I.max()*np.exp(-2)
-#I[I<=e2_val] = 0.0
 
 extent = np.array([x.min(), x.max(), y.min(), y.max()])*1e6
 
@@ -236,56 +239,17 @@ plt.figure()
 plt.title('Intensity at Focus')
 plt.imshow(I, cmap='viridis', 
            extent=extent)
-plt.contour(1e6*X, 1e6*Y, I, levels=[e2_val], colors=['y'])
+ax = plt.gca()
+CS = ax.contour(1e6*X, 1e6*Y, I, levels=[e2_val], colors=['y'])
+ax.clabel(CS, CS.levels, inline=True, fmt='$1/e^{2}$', fontsize=10)
 
 plt.xlabel('x [$\mu$m]')
 plt.ylabel('y [$\mu$m]')
 
-#should be waist size
+# Compare to theoretial focal spot size
+# Good agreement
 theta = np.linspace(0.0, 2.0*np.pi, 100)
 r = w0 * 1e6
 x_circ,y_circ = r*np.cos(theta), r*np.sin(theta)
-plt.plot(x_circ,y_circ,'r')
-
-#%%
-# see if anything is leaking out the simulation
-F = np.abs(Field)**2
-flux = np.trapz(np.trapz(F, x, axis=1), y, axis=0)
-
-plt.figure()
-plt.plot(z*1e6, np.abs(flux))
-#plt.yscale('log')
-plt.xlabel('z [$\mu$m]')
-plt.ylabel('Total flux in simulation')
-plt.grid()
-plt.show()
-
-
-#%%
-# SEE PHASE CHANGE THROUGH FOCUS?
-"""
-plt.figure()
-plt.imshow(phase(focal_slice), cmap='viridis', 
-           extent=extent)
-plt.xlabel('x ($\mu$m)')
-plt.ylabel('y ($\mu$m)')
-"""
-#%%
-fig, (ax1, ax2) = plt.subplots(1, 2, sharex=True, sharey=True)
-focal_slice = Field[:,:,0].copy()
-I = shadow(focal_slice)
-e2_val = I.max()*np.exp(-2)
-
-ax1.imshow(I, cmap='viridis', 
-           extent=extent)
-ax1.contour(1e6*X, 1e6*Y, I, levels=[e2_val], colors=['y'])
-
-
-focal_slice = Field[:,:,-1].copy()
-I = shadow(focal_slice)
-e2_val = I.max()*np.exp(-2)
-
-ax2.imshow(I, cmap='viridis', 
-           extent=extent)
-ax2.contour(1e6*X, 1e6*Y, I, levels=[e2_val], colors=['r'])
-ax1.contour(1e6*X, 1e6*Y, I, levels=[e2_val], colors=['r'])
+plt.plot(x_circ,y_circ,'r', label='Theoretical focal spot')
+plt.legend()
