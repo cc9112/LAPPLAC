@@ -7,11 +7,11 @@ The code takes an input initial electric field (amplitude and phase) and solves 
 
 
 
-# Requirements
+## Requirements
 The code was tested on 13/03/23, using the following versions:
 
-python 3.6.7
-numpy 1.17.3
-matplotlib 3.0.1
-scipy 1.3.2
-skimage 0.15.0
+* python 3.6.7
+* numpy 1.17.3
+* matplotlib 3.0.1
+* scipy 1.3.2
+* skimage 0.15.0
