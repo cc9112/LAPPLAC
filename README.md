@@ -13,7 +13,7 @@ Scripts in this repo do this by relative path reference, using the following\
 
 ~~~~
 import sys
-if '../' not in sys.path: sys.path.append('../')   
+if '../' not in sys.path: sys.path.append('../') # navigate to root directory from script
 from beamPropagator_source import *
 ~~~~
 
