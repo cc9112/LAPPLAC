@@ -4,6 +4,7 @@ Diffractive laser beam propagator.
 **n.b. this is a python-translated version of the LAPPLAC code, originally written by Rob Shalloo (Uni of Oxford) in Matlab.**
 
 The code takes an input initial electric field (amplitude and phase) and solves for its evolution through a given medium or refractive index, η.
+The code is written in cartesian coordinates (x, y, z), and only considers monochromatic laser beams.
 
 
 ### Loading in the source code
