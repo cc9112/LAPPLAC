@@ -203,8 +203,8 @@ ax2.set_title('Phase')
 ax3.set_title('$|E|^2 \geq e^{-2}$')
 
 #%%
-# Focal Spot Analysis
-# -------------------
+# Focal Spot Analysis - Compare to similar Guassian
+# -------------------------------------------------
 
 # Find closest z slice to focal plane
 idx = np.argmin((z-zf)**2)
@@ -213,39 +213,29 @@ focal_slice = Field[:,:,idx].copy()
 # Get intensity of focal plane
 I = shadow(focal_slice)
 
-
 # Plot Intensity Lineouts
 plt.figure()
-plt.title('Focus Intensity Profile Benchmark')
+plt.title('Focal Spot Intensity')
 I_x_lineout = I[n_pts//2,:]
-plt.plot(x*1e6, I_x_lineout, '.', label='x lineout')
-# No need to plot y lineout as it's identical
+I_y_lineout = I[:,n_pts//2]
+plt.plot(x*1e6, I_x_lineout, '-', label='x lineout')
+plt.plot(y*1e6, I_y_lineout, '--', label='y lineout')
 plt.xlabel('r [$\mu$m]')
 plt.ylabel('I [arb.]')
-
-# Compare to analytical theory
-from scipy.special import jn # Bessel function
-
-simulation_effective_f_number = zf / (w_z0_actual * 2)
-# normalised coordinate in theory
-r_prime = np.pi * x / (lambda0 * simulation_effective_f_number)
-
-I0 = np.max(I[:, n_pts//2])
-I_theoretical = I0 * (2 * jn(1, r_prime) / r_prime)**2
-
-plt.plot(x*1e6, I_theoretical, label='Analytical')
-
-plt.legend()
 plt.grid()
 
-#%%
-# Quantify difference for benchmarking
-# ------------------------------------
-squared_difference = (I_theoretical - I_x_lineout)**2
-rms = (np.sum(squared_difference) / I_theoretical.size)**(0.5)
-rms_frac = (rms / I0)
+# Similar Gaussian spot
+effective_f_number = zf / (2 * w_z0_actual)
+FWHM = effective_f_number * lambda0 * 1e6
+sigma = FWHM / (2 * (2*np.log(2))**(0.5))
+I0 = I_x_lineout.max()
+mu = 0.0
+I_Gauss = I0 * np.exp(-((x*1e6-mu)**2 / (2 * sigma**2)))
 
-print('Root-mean-square fraction: %.5f' % (rms_frac))
+plt.plot(x*1e6, I_Gauss, color='k', label='Gaussian FWHM=$\lambda_0\cdot$f/#')
+
+plt.xlim((-100, +100))
+plt.legend(loc=1)
 
 #%%
 plt.show()
