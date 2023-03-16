@@ -28,5 +28,5 @@ The code was tested on 13/03/23, using the following versions:
 
 ## References
 For more information on the underlying equations, see\
-[[1] Shalloo, Hydrodynamic optical-field-ionized plasma waveguides for laser plasma accelerators, (2018), pp. 34 - 36](https://ora.ox.ac.uk/objects/uuid:aa7a03d0-2d64-423f-be42-40e01479d312)
+[[1] Shalloo, Hydrodynamic optical-field-ionized plasma waveguides for laser plasma accelerators, (2018), pp. 34 - 36](https://ora.ox.ac.uk/objects/uuid:aa7a03d0-2d64-423f-be42-40e01479d312)\
 [[2] Colgan, Laser-plasma interactions as tools for studying processes in quantum electrodynamics, (2022), pp. 32 - 34](https://spiral.imperial.ac.uk/handle/10044/1/100927)
