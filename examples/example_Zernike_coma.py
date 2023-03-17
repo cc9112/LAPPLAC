@@ -43,7 +43,7 @@ k0 = 2.0*np.pi / laserParameters['lambda0']
 
 #%%
 #Setup computational parameters
-n_pts  = 1024   		# number of pixels (must be even)
+n_pts  = 2048   		# number of pixels (must be even)
 res    = 0.8*um   		# resolution in image plane (m)
 
 mid = int(n_pts/2)
