@@ -25,7 +25,8 @@ from beamPropagator_source import *
 
 
 #%%
-#Setup Laser Parameters
+# Setup Laser Parameters
+# ----------------------
 laserParameters = {
 'lambda0' 	: 0.800*um,  	    # wavelength (m)
 'tau'    	: 100.0*fs,	 	    # pulse width (s)
@@ -55,6 +56,7 @@ w_z0 = w0 * np.sqrt(1.0 + (z0/zR)**2)
 laserParameters['w_z0'] = w_z0
 #%%
 # Setup computational parameters
+# ------------------------------
 n_pts  = 512   		# number of pixels (must be even)
 res    = 1*um   		# resolution in image plane (m)
 nz     = 512    		# number of points in z (must be even)
@@ -62,6 +64,7 @@ nz     = 512    		# number of points in z (must be even)
 mid = int(n_pts/2)
 #%%
 # Create calculation grid
+# -----------------------
 x = np.linspace(-res*n_pts/2 , res*n_pts/2, n_pts ) #centering occurs here
 y = np.linspace(-res*n_pts/2 , res*n_pts/2, n_pts )
 X, Y = np.meshgrid(x,y)
@@ -73,7 +76,7 @@ inputBeam = make_inputBeam(X,Y,laserParameters)
 
 # Setup phase profile
 
-# focusing beam
+# Define focusing beam
 w_z0 = laserParameters['w_z0']
 lambda0 = laserParameters['lambda0']
 
@@ -88,9 +91,7 @@ inputPhase = k * R_sq/(2.0*Rz) - guoy
 inputBeam = inputBeam * np.exp(-1j * inputPhase) #get it into complex format
 
 
-# CHECK INPUT BEAM
-# WAIST SIZE IS SPOT ON!
-
+# Check input beam and how this compares to waist size
 fig, (ax1, ax2) = plt.subplots(1,2)
 fig.suptitle('inputBeam')
 
@@ -98,10 +99,9 @@ extent = np.array([x.min(), x.max(), y.min(), y.max()])*1e6
 
 ax1.set_title('|E|$^{2}$ Waist')
 t = shadow(inputBeam)**2
-#t[t<t.max()*np.exp(-2)] = 0.0
 ax1.imshow(t, extent=extent)
 
-# should be waist size
+
 theta = np.linspace(0.0, 2.0*np.pi, 100)
 r = w_z0 * 1e6
 x_circ,y_circ = r*np.cos(theta), r*np.sin(theta)
@@ -111,26 +111,16 @@ ax1.plot(x_circ,y_circ,'r')
 ax2.set_title('Phase')
 ax2.imshow(phase(inputBeam), extent=extent)
 
-# numerical aperture of beam - from https://en.wikipedia.org/wiki/Numerical_aperture#laser_physics
-# could be an approximation anyway
-NA = (lambda0) / (np.pi*w0)
-f_number_1 = 1.0/(2.0 * NA)
-
-#how we would normally define it
-f = zf
-D = 2.0 * w_z0
-f_number_2 = f/D
-print('f_number_1: ', f_number_1)
-print('f_number_2: ', f_number_2)
-
 
 #%%
 # Specify plasma
+# --------------
 # None - propagate in vacuum
 ne = np.zeros((n_pts, n_pts, nz))
 
 #%%
-#Setup first step and tools for propagation
+# Setup first step and tools for propagation
+# -----------------------------------------
 # Propagate the beam through the plasma structure
 # data.Field = beamPropagator(data); 
 
@@ -146,16 +136,22 @@ k0 = 2.0*np.pi/laserParameters['lambda0']
 AS, xFreq, yFreq, G, mask, X, Y, z, eta = setup_propagate(inputBeam, X, Y, z, eta, k0, eta0, absorbingBoundaries)
 
 #%%
-#% MAIN ITERATION LOOP IN dz
+# Main iteration loop in dz
+# -------------------------
+
+# can be quite slow
 Field = propagate_in_z(AS, xFreq, yFreq, G, mask, X, Y, z, eta, k0)
 
 #%%
 # Interactive viewer of whole propagation of beam
+# -----------------------------------------------
 
 buttons = explorer(Field, ne, z)
 
 #%%
-# COMPARE WITH GUASSIAN BEAM PROPAGATION THEORY
+# Compare with Gaussian beam propagation theory
+# ---------------------------------------------
+
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True)
 
 fig.suptitle('Gaussian Free Space Propagation')
@@ -169,9 +165,7 @@ ax2.imshow(im, aspect=asp, extent=[z.min()*1e3, z.max()*1e3, y.min()*1e3, y.max(
            norm=MidpointNormalize(midpoint=0.0,vmin=-np.pi/2.0, vmax=np.pi/2.0))
 
 
-# not what we usually measure
-# we think of a plane in z and ask whats the phase at this plane?
-# then you get a parabola if focussing
+# Check phase does go from negative to positive through focus
 Zd,Yd = np.meshgrid(z*1e3, y*1e3)
 levels = np.linspace(-np.pi/2.0, np.pi/2.0, 9)
 ax2.contour(Zd, Yd, im, levels=levels)
@@ -181,24 +175,22 @@ ax1.set_ylabel('y (mm)')
 ax2.set_xlabel('z (mm)')
 ax3.set_xlabel('z (mm)')
 
+# threshold beam propagation at e**-2 value to compare with analytical theory
+# of waist size propagation
 thresh = np.zeros_like(Field[:, mid, :], dtype=np.float64)
 for zi in range((Field.shape[-1])):
     f = Field[:,mid,zi].copy()
     f = np.abs(f)**2
-    
     top = np.max(f)
     f[f <= top*np.e**(-2)] = 0.0
     f[f > top*np.e**(-2)] = 1.0
-    
     thresh[:,zi] = f
 
-#compare with analytical
-w0 *= 1.01
+# Analytical formula - overlay on plot
+w0 *= 1.00
 zR = np.pi*w0**2/(lambda0)
 zf = 3.0*zR
-#zf = 10.425e-3
 zc = z.copy() - zf
-
 w = w0 * np.sqrt(1.0 + (zc/zR)**2)        
 ax3.imshow(thresh, aspect=asp, extent=[z.min()*1e3, z.max()*1e3, y.min()*1e3, y.max()*1e3])
 ax3.plot(z*1e3, w*1e3, 'r--', label='Analytical')
@@ -211,19 +203,22 @@ ax3.legend()
 
 
 #%%
-# CHECK THAT IT MAKES PROPER CURVED WAVEFRONTS
+# Check that we get negative and positive curved wavefronts in real space
+# Requires adding back in the exp(-j * omega * t) factor
+# ------------------------------------------------------
 plt.figure()
+
 E_full = np.real(np.exp(+1j * k0 * Zd*1e-3) *  Field[:, mid, :])
-plt.title('Include Beam Oscillations: $\Re$(Ee$^{ikz}$)')
 plt.imshow(E_full, aspect=asp, extent=[z.min()*1e3, z.max()*1e3, y.min()*1e3, y.max()*1e3])
+
+plt.title('Include Beam Oscillations: $\Re$(Ee$^{ikz}$)')
 plt.xlabel('z (mm)')
 plt.ylabel('y (mm)')
 
 
 #%%
-# COMPARE FOCAL SPOT TO GUASSIAN BEAM PROPAGATION THEORY
-
-# AT FOCAL PLANE, W0 = 1/e^2 RADIUS OF THE BEAM'S INTENSITY
+# Compare focal spot to Gaussian beam propagation theory
+# -----------------------------------------------------
 
 # Find focal point in z
 idx = np.argmin((z-zf)**2)
@@ -247,7 +242,7 @@ plt.xlabel('x [$\mu$m]')
 plt.ylabel('y [$\mu$m]')
 
 # Compare to theoretial focal spot size
-# Good agreement
+# Very good agreement
 theta = np.linspace(0.0, 2.0*np.pi, 100)
 r = w0 * 1e6
 x_circ,y_circ = r*np.cos(theta), r*np.sin(theta)
