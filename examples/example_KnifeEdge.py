@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-MIGHT BE BETTER OFF AS A QUICK PROPAGATE!
+Simulate propagtion of a typical Gaussian beam alignment laser that has been
+perfectly obstructed down its centre by a knife edge.
 
-The workflow is a copy of Rob's LAPPLAC code, from matlab to python.
-A combination of many scripts enough to replicate the example
+The inital z and zR values require extra care here, to ensure their values 
+match the manufacturer's information.
 
 Created on Wed Jul 9th 20:43:59 2020
 
