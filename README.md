@@ -9,7 +9,7 @@ The simulation is written in cartesian coordinates (x, y, z), and only considers
 ### FFTBPM
 The complex electric field is propagated using a split-step fast Fourier transform beam propagation method (FFTBPM).\
 For more information on the underlying equations, see [1] or [2].\
-Alternatively, for an in-depth description as to why the exponential of a Laplacian operator is mathematically equivalent to taking the Fourier transform, and why using a split-step scheme in δz provides higher order accuracy (~ δz^3^), see [3].
+Alternatively, for an in-depth description as to why the exponential of a Laplacian operator is mathematically equivalent to taking the Fourier transform, and why using a split-step scheme in δz provides higher order accuracy (~ δz^3), see [3].
 
 ### Loading in the source code
 All functions for using the code can be imported from the beamPropagator_source directory.\
