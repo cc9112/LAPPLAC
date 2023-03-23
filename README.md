@@ -13,7 +13,7 @@ Alternatively, for an in-depth description as to why the exponential of a Laplac
 
 ### Loading in the source code
 All functions for using the code can be imported from the beamPropagator_source directory.\
-Scripts in this repo do this by relative path reference, using the following
+This can either be done by running the script from the root directory of this repo and importing the module, or by relative path reference using the following
 
 ~~~~
 import sys
@@ -22,13 +22,13 @@ from beamPropagator_source import *
 ~~~~
 
 ### Requirements
-The code was tested on 13/03/23, using the following versions:
+The code was tested on 13/03/23 on macOs 10.15.1, and on Windows 10 22H2, using the following versions (Windows versions in parantheses):
 
-* python 3.6.7
-* numpy 1.17.3
-* matplotlib 3.0.1
-* scipy 1.3.2
-* skimage 0.15.0
+* python 3.6.7 (3.9.13)
+* numpy 1.17.3 (1.21.5)
+* matplotlib 3.0.1 (3.5.2)
+* scipy 1.3.2 (1.9.1)
+* skimage 0.15.0 (0.19.2)
 
 ### References
 [[1] Shalloo, Hydrodynamic optical-field-ionized plasma waveguides for laser plasma accelerators, (2018), pp. 34 - 36](https://ora.ox.ac.uk/objects/uuid:aa7a03d0-2d64-423f-be42-40e01479d312)\
