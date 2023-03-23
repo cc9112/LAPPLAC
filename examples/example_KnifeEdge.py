@@ -93,13 +93,18 @@ mid = int(n_pts/2)
 x = np.linspace(-res*n_pts/2 , res*n_pts/2, n_pts ) #centering occurs here
 y = np.linspace(-res*n_pts/2 , res*n_pts/2, n_pts )
 X, Y = np.meshgrid(x,y)
+
+# meshgrid axes:
+#   [0, :] changing x
+#   [:, 0] changing y    
 z = np.linspace(0,zMax,nz)
 
 inputBeam = make_inputBeam(X,Y,laserParameters)
 
 # Knife-Edge Effect
 # Cut beam in half. Bottom half blocked
-inputBeam[mid:, :] = 0.0
+ids = (Y >= 0.0)
+inputBeam[ids] = 0.0
 
 # Setup phase profile
 # Focusing beam
@@ -228,3 +233,12 @@ plt.ylabel('Intensity [arb.]')
 plt.xlim((-10, +10))
 plt.grid()
 plt.show()
+
+# angular offset 
+delta_y = y[np.argmax(I[:, mid])] - y[np.argmax(t[:, mid])]
+delta_z = z[-1] - z[0]
+
+deg = np.pi/180.0
+theta_diffraction = np.arctan(delta_y / delta_z)
+print(f'Maxima angle: {theta_diffraction/deg} deg')
+print(f'Maxima angle: {theta_diffraction*1e3} mrad')

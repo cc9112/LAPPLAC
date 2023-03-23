@@ -45,20 +45,20 @@ def explorer(Field, ne, z):
     
     #initial plots
     ax_out = fig.add_subplot(gs[0,3])
-    im2 = ax_out.imshow(shadow(Field[:,:,-1]), origin='lower') 
+    im2 = ax_out.imshow(shadow(Field[:,:,-1]))#, origin='lower') 
     ax_out.set_xlabel('Shadowgraphy')
     ax_out.set_title('z = %.2f $\mu$m' % float(z[-1]*1e6))
     
     ax_in = fig.add_subplot(gs[0,0])
     vmin, vmax = im2.get_clim()
-    im = ax_in.imshow(shadow(Field[:,:,0]), origin='lower', vmin=vmin, vmax=vmax) 
+    im = ax_in.imshow(shadow(Field[:,:,0]), vmin=vmin, vmax=vmax) #origin='lower',
     ax_in.set_ylabel('Y (pixels)')
     ax_in.set_xlabel('X (pixels)')
     ax_in.set_title('Input beam')
     
     
     ax_out2 = fig.add_subplot(gs[1,3])
-    im3 = ax_out2.imshow(phase(Field[:,:,-1]), origin='lower',
+    im3 = ax_out2.imshow(phase(Field[:,:,-1]), #origin='lower',
                          cmap=matplotlib.cm.RdBu_r, 
                          norm=MidpointNormalize(midpoint=0.0,
                                                 vmin=phase(Field[:,:,-1]).min(), vmax=phase(Field[:,:,-1]).max())) 
@@ -70,13 +70,13 @@ def explorer(Field, ne, z):
     nemin, nemax = np.min(ne), np.max(ne)
     ax_endon = fig.add_subplot(gs[0,1])
     #fig2, ((ax_endon, ax_topdown), (_, ax_transverse)) = plt.subplots(2,2)
-    ax_endon.imshow(np.transpose(ne[:, int(n_pts/2), :]), origin='lower', vmin=nemin, vmax=nemax) #constant x - end on
+    ax_endon.imshow(np.transpose(ne[:, int(n_pts/2), :]), vmin=nemin, vmax=nemax) #constant x - end on origin='lower',
     ax_endon.set_title('end-on')
     ax_endon.set_xlabel('Y')
     ax_endon.set_ylabel('Z')
     
     ax_topdown = fig.add_subplot(gs[0,2])
-    ax_topdown.imshow(np.transpose(ne[int(n_pts/2), :, :]), origin='lower', vmin=nemin, vmax=nemax) #constant y - top down
+    ax_topdown.imshow(np.transpose(ne[int(n_pts/2), :, :]), vmin=nemin, vmax=nemax) #constant y - top down origin='lower',
     ax_topdown.set_title('topdown')
     ax_topdown.set_xlabel('X')
     ax_topdown.set_ylabel('Z')
@@ -85,7 +85,7 @@ def explorer(Field, ne, z):
     lineout, = ax_topdown.plot([0.0, n_pts], [z_start, z_start], 'w')
     
     ax_transverse = fig.add_subplot(gs[1,2])
-    im_transverse = ax_transverse.imshow(ne[:, :, -1], origin='lower', vmin=nemin, vmax=nemax) #constant z - transverse
+    im_transverse = ax_transverse.imshow(ne[:, :, -1], vmin=nemin, vmax=nemax) #constant z - transverse origin='lower',
     ax_transverse.set_title('transverse')
     ax_transverse.set_xlabel('X')
     ax_transverse.set_ylabel('Y')
