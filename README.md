@@ -16,7 +16,7 @@ The complex electric field is propagated using a split-step fast Fourier transfo
 For more information on the underlying equations, see [1] or [2].\
 Alternatively, for an in-depth description as to why the exponential of a Laplacian operator is mathematically equivalent to taking the Fourier transform, and why using a split-step scheme in δz provides higher order accuracy (~ δz<sup>3</sup>), see [3].
 
-**The main workflow of this code is a python-translated version of the LAPPLAC code, originally written by Rob Shalloo (University of Oxford) in Matlab.**
+**The main workflow here is a python-translated version of the LAPPLAC code. This was originally written by Rob Shalloo (University of Oxford) in Matlab.**
 
 
 ### Loading in the source code
