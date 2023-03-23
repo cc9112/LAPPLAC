@@ -35,7 +35,7 @@ The code was tested on 13/03/23 on macOs 10.15.1, and on Windows 10 22H2, using 
 * python      3.6.7  (3.9.13)
 * numpy      1.17.3  (1.21.5)
 * matplotlib  3.0.1  ( 3.5.2)
-* scipy         1.3.2  ( 1.9.1)
+* scipy          1.3.2  ( 1.9.1)
 * skimage    0.15.0  (0.19.2)
 
 ### References
