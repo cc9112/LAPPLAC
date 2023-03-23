@@ -6,6 +6,13 @@ Diffractive laser beam propagator.
 The simulation takes an input initial electric field (amplitude and phase) and solves its evolution through a given medium of refractive index, η.
 The simulation is written in cartesian coordinates (x, y, z), and only considers monochromatic laser beams. It has no notion of time. 
 
+For example, the code can be used to simulate:
+* Propagation of arbitrary laser beam profiles.
+* Effects of optical aberrations and distributed phase plates on laser focal spots.
+* Diffraction of beams around sharp edges and obstacles.
+* Imaging-based diagnostics, such as shadowgraphy and interferometry.
+* Optical waveguides.
+
 ### FFT-BPM
 The complex electric field is propagated using a split-step fast Fourier transform based beam propagation method (FFT-BPM).\
 For more information on the underlying equations, see [1] or [2].\
