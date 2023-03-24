@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 um		= 1e-6		# microns
 mm 		= 1e-3		# millimeters
 fs 		= 1e-15	# femtoseconds
-re 		= 2.81794e-15 		# classical electron radius
 
 from scipy.constants import epsilon_0, m_e, e, c
+
+from scipy.constants import physical_constants
+re      = physical_constants.copy()['classical electron radius'][0]

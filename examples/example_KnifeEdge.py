@@ -87,6 +87,7 @@ res    = 50*um   		# resolution in image plane (m)
 nz     = 512    		# number of points in z (must be even)
 
 mid = int(n_pts/2)
+
 #%%
 # Create calculation grid
 # -----------------------
